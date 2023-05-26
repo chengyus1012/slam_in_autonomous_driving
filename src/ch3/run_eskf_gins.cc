@@ -2,7 +2,8 @@
 // Created by xiang on 2021/11/11.
 //
 
-#include "ch3/eskf.hpp"
+// #include "ch3/eskf.hpp"
+#include "ch3/eskf_left_multiply.hpp"
 #include "ch3/static_imu_init.h"
 #include "common/io_utils.h"
 #include "tools/ui/pangolin_window.h"

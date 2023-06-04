@@ -57,6 +57,9 @@ class EdgeInertial : public g2o::BaseMultiEdge<9, Vec9d> {
     const double dt_;
     std::shared_ptr<IMUPreintegration> preint_ = nullptr;
     Vec3d grav_;
+    Vec3d er_;
+    Vec3d ep_;
+    Vec3d ev_;
 };
 
 }  // namespace sad

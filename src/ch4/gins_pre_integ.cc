@@ -23,6 +23,7 @@ void GinsPreInteg::AddImu(const IMU& imu) {
     first_imu_received_ = true;
     last_imu_ = imu;
     current_time_ = imu.timestamp_;
+    imu_ready = true;
 }
 
 void GinsPreInteg::SetOptions(sad::GinsPreInteg::Options options) {
@@ -88,9 +89,21 @@ void GinsPreInteg::AddGnss(const GNSS& gnss) {
     last_gnss_ = this_gnss_;
 }
 
-void GinsPreInteg::AddOdom(const sad::Odom& odom) {
+void GinsPreInteg::AddOdom(const sad::Odom& odom, bool flag) 
+{
     last_odom_ = odom;
     last_odom_set_ = true;
+    if(flag && imu_ready)
+    {
+        this_frame_ = std::make_shared<NavStated>(current_time_);
+        pre_integ_->Integrate(last_imu_, odom.timestamp_ - current_time_);
+        current_time_ = odom.timestamp_;
+        *this_frame_ = pre_integ_->Predict(*last_frame_, options_.gravity_);
+
+        Optimize();
+
+        last_frame_ = this_frame_;
+    }
 }
 
 void GinsPreInteg::Optimize() {
@@ -249,6 +262,7 @@ void GinsPreInteg::Optimize() {
     options_.preinteg_options_.init_bg_ = this_frame_->bg_;
     options_.preinteg_options_.init_ba_ = this_frame_->ba_;
     pre_integ_ = std::make_shared<IMUPreintegration>(options_.preinteg_options_);
+    imu_ready = false;
 }
 
 NavStated GinsPreInteg::GetState() const {

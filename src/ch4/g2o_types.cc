@@ -36,6 +36,9 @@ void EdgeInertial::computeError() {
     const Vec3d ep = RiT * (p2->estimate().translation() - p1->estimate().translation() - v1->estimate() * dt_ -
                             grav_ * dt_ * dt_ / 2) -
                      dp;
+    er_ = er;
+    ev_ = ev;
+    ep_ = ep;
     _error << er, ev, ep;
 }
 
@@ -69,9 +72,23 @@ void EdgeInertial::linearizeOplus() {
     Vec3d pj = p2->estimate().translation();
 
     const SO3 dR = preint_->GetDeltaRotation(bg);
+    const Vec3d dv = preint_->GetDeltaVelocity(bg, ba);
     const SO3 eR = SO3(dR).inverse() * R1T * R2;
     const Vec3d er = eR.log();
     const Mat3d invJr = SO3::jr_inv(eR);
+    Mat3d RiT = p1->estimate().so3().inverse().matrix();
+
+    // Q3 verification
+    Vec3d eps1(1e-6, 0, 0);
+    Vec3d eps2(0, 1e-6, 0);
+    Vec3d eps3(0, 0, 1e-6);
+
+    Vec3d new_ev = RiT * (v2->estimate() - v1->estimate() - eps1 - grav_ * dt_) - dv;
+    Mat3d my_jacobian;
+
+    my_jacobian.col(0) = (RiT * (v2->estimate() - v1->estimate() - eps1 - grav_ * dt_) - dv - ev_)/1e-6;
+    my_jacobian.col(1) = (RiT * (v2->estimate() - v1->estimate() - eps2 - grav_ * dt_) - dv - ev_)/1e-6;
+    my_jacobian.col(2) = (RiT * (v2->estimate() - v1->estimate() - eps3 - grav_ * dt_) - dv - ev_)/1e-6;
 
     /// 雅可比矩阵
     /// 注意有3个index, 顶点的，自己误差的，顶点内部变量的
@@ -133,6 +150,10 @@ void EdgeInertial::linearizeOplus() {
     _jacobianOplus[5].setZero();
     // dv/dv2, 4,46b
     _jacobianOplus[5].block<3, 3>(3, 0) = R1T.matrix();  // OK
+
+    
+    LOG(INFO) << "numeric_jacobian" << my_jacobian;
+    LOG(INFO) << "closed_form_jacobian" << _jacobianOplus[1].block<3, 3>(3, 0);
 }
 
 }  // namespace sad

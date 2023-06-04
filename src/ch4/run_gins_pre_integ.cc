@@ -22,6 +22,7 @@ DEFINE_double(antenna_pox_x, -0.17, "RTK天线安装偏移X");
 DEFINE_double(antenna_pox_y, -0.20, "RTK天线安装偏移Y");
 DEFINE_bool(with_ui, true, "是否显示图形界面");
 DEFINE_bool(debug, false, "是否打印调试信息");
+DEFINE_bool(trigger_by_odom, true, "是否由ODOM触发优化");
 
 int main(int argc, char** argv) {
     google::InitGoogleLogging(argv[0]);
@@ -137,7 +138,7 @@ int main(int argc, char** argv) {
             imu_init.AddOdom(odom);
 
             if (imu_inited && gnss_inited) {
-                gins.AddOdom(odom);
+                gins.AddOdom(odom, FLAGS_trigger_by_odom);
             }
         })
         .Go();

@@ -7,7 +7,8 @@
 - 本书文本目前处于审阅状态。如果您希望成为本书的审稿人，请联系：gao.xiang.thu at gmail.com
 - 成为审稿人之后，您可以查阅本书每日更新的PDF稿件。同时，您需要在两个月内向我反馈您的意见。您可以通过github
   issue或邮件形式将意见发送给我。
-- **本书初稿将于2023年3月底close第一轮，我会将稿件交给出版社处理，请各位审稿人及时更新您的审稿意见。当然，后续的issues也会随着出版印次修复，但您的名字可能无法及时更新到致谢列表中。**
+- 本书初稿将于2023年3月底close第一轮，我会将稿件交给出版社处理，请各位审稿人及时更新您的审稿意见。当然，后续的issues也会随着出版印次修复，但您的名字可能无法及时更新到致谢列表中。
+- 本书已在终审阶段（2023.6.14），预计7月将和读者见面。我个人可能会配合出版社做一些活动（打折，签名），之后看情况启动英文版翻译工作。
 - 如果您有意向为本书写几句推荐语，也请联系我本人。推荐语会出现在本书前言部分或者书的封底部分。
 
 ## 本书的内容编排
@@ -73,7 +74,8 @@
     ```bash
     sudo apt install -y ros-noetic-pcl-ros ros-noetic-velodyne-msgs libopencv-dev libgoogle-glog-dev libeigen3-dev libsuitesparse-dev libpcl-dev libyaml-cpp-dev libbtbb-dev libgmock-dev
     ```
-    - Pangolin: https://github.com/stevenlovegrove/Pangolin
+    - Pangolin: 编译安装thirdparty/pangolin.zip，或者 https://github.com/stevenlovegrove/Pangolin
+    - 编译thirdparty/g2o，或者自行编译安装 https://github.com/RainerKuemmerle/g2o 
     - 通过cmake, make安装本repo下的`thirdparty/g2o`库
 - 之后，使用通常的cmake, make方式就可以编译本书所有内容了。例如
 ```bash
@@ -115,10 +117,14 @@ cmake .. -DBUILD_WITH_UBUNTU1804=ON
 make -j8
 ```
 
+## 常见问题
+1. 图形界面在2023年以后特定型号的笔记本端导致桌面卡死（GL硬件兼容性）：https://github.com/gaoxiang12/slam_in_autonomous_driving/issues/67 
+2. 第5章test_nn编译时，gtest报gmock错误：https://github.com/gaoxiang12/slam_in_autonomous_driving/issues/18
+3. 编译器版本问题：https://github.com/gaoxiang12/slam_in_autonomous_driving/issues/4 
+
 ## TODO项
 
 - 一部分插图需要授权
-- 将UI里的不必要信息去除(右侧面板)
 - 整理数据集（增加几个seq）
 - 第9章前端第0个关键帧貌似有问题
 - LioPreiteg在某些数据集上不收敛
